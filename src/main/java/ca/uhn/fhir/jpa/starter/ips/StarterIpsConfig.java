@@ -17,7 +17,7 @@ public class StarterIpsConfig {
 	@Bean 
 	IIpsGenerationStrategy IpsGenerationStrategy()
 	{
-		return new DefaultIpsGenerationStrategy();
+		return new IpsGenerationCbacStrategy();
 	}
 
 	@Bean
@@ -28,7 +28,7 @@ public class StarterIpsConfig {
 	@Bean
 	public IIpsGeneratorSvc IpsGeneratorSvcImpl(FhirContext theFhirContext, IIpsGenerationStrategy theGenerationStrategy, DaoRegistry theDaoRegistry)
 	{
-		return new IpsGeneratorSvcImpl(theFhirContext, theGenerationStrategy, theDaoRegistry);
+		return new IpsGeneratorCbacImpl(theFhirContext, theGenerationStrategy, theDaoRegistry);
 	}
 	
 }
