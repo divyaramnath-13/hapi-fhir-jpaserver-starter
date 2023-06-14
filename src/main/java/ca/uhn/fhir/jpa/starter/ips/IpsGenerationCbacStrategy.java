@@ -9,20 +9,31 @@ import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.util.HashSet;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import static ca.uhn.fhir.jpa.term.api.ITermLoaderSvc.LOINC_URI;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IIdType;
+import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.AllergyIntolerance;
+import org.hl7.fhir.r4.model.ClinicalImpression;
+import org.hl7.fhir.r4.model.Composition;
+import org.hl7.fhir.r4.model.Condition;
+import org.hl7.fhir.r4.model.DeviceUseStatement;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Immunization;
+import org.hl7.fhir.r4.model.MedicationAdministration;
+import org.hl7.fhir.r4.model.MedicationDispense;
+import org.hl7.fhir.r4.model.MedicationRequest;
+import org.hl7.fhir.r4.model.MedicationStatement;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Organization;
+import org.hl7.fhir.r4.model.Procedure;
+import org.hl7.fhir.r4.model.ResourceType;
 
 @SuppressWarnings({"EnhancedSwitchMigration", "HttpUrlsUsage"})
 public class IpsGenerationCbacStrategy implements IIpsGenerationStrategy {
@@ -36,7 +47,7 @@ public class IpsGenerationCbacStrategy implements IIpsGenerationStrategy {
 	 * Constructor
 	 */
 	public IpsGenerationCbacStrategy() {
-		setSectionRegistry(new SectionRegistry());
+		setSectionRegistry(new CbacSectionRegistry());
 	}
 
 	@Override
@@ -44,7 +55,7 @@ public class IpsGenerationCbacStrategy implements IIpsGenerationStrategy {
 		return mySectionRegistry;
 	}
 
-	public void setSectionRegistry(SectionRegistry theSectionRegistry) {
+	public void setSectionRegistry(CbacSectionRegistry theSectionRegistry) {
 		if (!theSectionRegistry.isInitialized()) {
 			theSectionRegistry.initialize();
 		}
@@ -90,11 +101,6 @@ public class IpsGenerationCbacStrategy implements IIpsGenerationStrategy {
 			case ALLERGY_INTOLERANCE:
 				break;
 			case PROBLEM_LIST:
-				if (theIpsSectionContext.getResourceType().equals(ResourceType.Observation.name())) {
-					theSearchParameterMap.add(Observation.SP_CODE, new TokenOrListParam().addOr(new TokenParam("CBAC"))
-					);
-					return;
-				}
 				if (theIpsSectionContext.getResourceType().equals(ResourceType.Condition.name())) {
 					theSearchParameterMap.setLastNMax(2);
 					return;
